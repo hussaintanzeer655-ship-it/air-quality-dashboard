@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Air Quality Insight Dashboard - Malaysia Trends</title>
+  <meta name="description" content="A professional static site showcasing air quality index trends in Malaysia with a responsive, accessible dashboard." />
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #141a33;
+      --text: #e8eaf6;
+      --muted: #a6b3d6;
+      --accent: #4cc9f0;
+      --accent2: #7b61ff;
+      --green: #4cd97b;
+      --red: #ff6b6b;
+      --shadow: 0 8px 20px rgba(0,0,0,.25);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system;
+      background: radial-gradient( circle at 10% -10%, rgba(76,201,240,.15) 0%, transparent 40% ),
+                  radial-gradient( circle at 100% 0%, rgba(123,97,255,.15) 0%, transparent 40% ),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:focus { outline: 3px solid #ffd166; outline-offset: 2px; border-radius: 4px; }
+    header {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(10,12,28,.95);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .container { width: min(1100px, 90%); margin: 0 auto; padding: 1rem 0; }
+    .brand { display: flex; align-items: center; gap: .75rem; }
+    .brand .logo {
+      width: 38px; height: 38px; display: inline-block;
+      border-radius: 8px;
+      background: conic-gradient(from 140deg, var(--accent), var(--accent2), #6be675);
+      box-shadow: inset 0 0 12px rgba(255,255,255,.25);
+    }
+    nav ul { list-style: none; padding: 0; margin: 0; display: flex; gap: 1rem; }
+    nav a { color: #eaf4ff; font-weight: 600; padding: .5rem 0; display: inline-block; }
+    main { padding: 2rem 0 4rem; }
+    .hero {
+      display: grid; grid-template-columns: 1fr; gap: 1.25rem;
+      align-items: center;
+    }
+    .hero h1 { margin: 0; font-size: clamp(1.8rem, 2.4vw + 1rem, 3rem); }
+    .hero p { color: var(--muted); margin: .25rem 0 0 0; }
+    .cta { display: inline-flex; gap: .75rem; margin-top: .75rem; }
+    .btn {
+      padding: .75rem 1rem; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.2);
+      background: linear-gradient(180deg, rgba(76,201,240,.25), rgba(76,201,240,.05));
+      color: #fff; font-weight: 700; cursor: pointer;
+    }
+    .btn.secondary {
+      background: rgba(255,255,255,.06);
+    }
+    .grid { display: grid; gap: 1rem; margin-top: 1.25rem;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+    .card {
+      background: linear-gradient(180deg, rgba(20,26,51,.95), rgba(20,26,51,.75));
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 12px; padding: 1rem;
+      box-shadow: var(--shadow);
+    }
+    .card h2 { font-size: 1.1rem; margin: 0 0 .5rem 0; }
+    .card p { color: var(--muted); margin: 0; }
+    .chart {
+      width: 100%; height: 180px; display: block; background: #0b1020;
+      border-radius: 8px; border: 1px solid rgba(255,255,255,.08);
+    }
+    footer { margin-top: 2rem; padding: 1rem 0; color: var(--muted); font-size: .9rem; text-align: center; }
+    /* Accessibility: prefers-reduced-motion */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+    /* Responsive tweaks */
+    @media (min-width: 760px) {
+      .hero { grid-template-columns: 1.05fr 0.95fr; gap: 2rem; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main" aria-label="Skip to content" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">
+    Skip to content
+  </a>
+  <header role="banner" aria-label="Site header">
+    <div class="container brand" style="padding: .75rem 0;">
+      <span class="logo" aria-hidden="true"></span>
+      <span style="font-weight:900; font-size:1.1rem; letter-spacing:.5px;">AirQuality MD</span>
+    </div>
+    <nav class="container" aria-label="Main navigation">
+      <ul role="menubar" aria-label="Main">
+        <li role="none"><a href="#overview" role="menuitem">Overview</a></li>
+        <li role="none"><a href="#live-snapshot" role="menuitem">Live Snapshot</a></li>
+        <li role="none"><a href="#trend-chart" role="menuitem">7-Day Trend</a></li>
+        <li role="none"><a href="#about" role="menuitem">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main" role="main" tabindex="-1">
+    <section class="container hero" aria-label="Hero section">
+      <div>
+        <h1 id="overview">Air Quality Insight Dashboard</h1>
+        <p>Static, professional, accessible analysis of Malaysia's air quality index (AQI). View a ready-to-use chart, understand what AQI means, and explore a concise 7-day trend to guide decisions.</p>
+        <div class="cta" aria-label="Call to action">
+          <button class="btn" onclick="scrollToLive()">View Live Snapshot</button>
+          <button class="btn secondary" onclick="scrollToChart()">View 7-Day Trend</button>
+        </div>
+      </div>
+      <div aria-label="Illustrative panel" role="region" class="card" style="min-height:140px; display:flex; align-items:center; justify-content:center;">
+        <div style="text-align:center;">
+          <div style="font-weight:700; font-size:1.05rem; margin-bottom:.25rem;">AQI Snapshot</div>
+          <div style="font-size:.9rem; color:var(--muted);">Today: Moderate</div>
+          <div style="margin-top:.5rem; width:100px; height:6px; background:#2b2e63; border-radius:3px; margin-left:auto; margin-right:auto;"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="overview" class="container grid" aria-label="Overview cards">
+      <article class="card" aria-labelledby="aqi-title">
+        <h2 id="aqi-title">What is AQI?</h2>
+        <p>AQI (Air Quality Index) is a standardized indicator of air pollutant levels. Higher values suggest poorer air quality and potential health impacts.</p>
+      </article>
+
+      <article class="card" aria-labelledby="data-source-title">
+        <h2 id="data-source-title">Data Source</h2>
+        <p>Trend data shown here is indicative. For production, connect to reputable AQI feeds or local environmental agencies to populate the chart.</p>
+      </article>
+
+      <article class="card" aria-labelledby="action-title">
+        <h2 id="action-title">What you can do</h2>
+        <p>Limit outdoor activity on high AQI days, close windows during pollution peaks, and use air purifiers where appropriate.</p>
+      </article>
+    </section>
+
+    <section id="live-snapshot" class="container" aria-label="Live snapshot" >
+      <h2 style="margin: .25rem 0 0.75rem 0;">Live Snapshot</h2>
+      <div class="card" style="padding: 1rem;">
+        <div style="display:flex; flex-wrap:wrap; gap:1rem; align-items:center;">
+          <div style="flex:1 1 180px; min-width:180px;">
+            <div style="color:var(--muted); font-size:.9rem; margin-bottom:.25rem;">Current AQI</div>
+            <div style="font-size:2.2rem; font-weight:900; letter-spacing:.5px;">86</div>
+          </div>
+          <div style="flex:1 1 180px; min-width:180px;">
+            <div style="color:var(--muted); font-size:.9rem; margin-bottom:.25rem;">PM2.5 Focus</div>
+            <div style="font-size:1.5rem; font-weight:700;">Moderate</div>
+          </div>
+          <div style="flex:1 1 180px; min-width:180px;">
+            <div style="color:var(--muted); font-size:.9rem; margin-bottom:.25rem;">Air Quality Index Range</div>
+            <div style="font-weight:700;">40 - 150</div>
+          </div>
+        </div>
+        <canvas id="liveChart" class="chart" aria-label="Live AQI spark line" width="640" height="180" style="width:100%; height:180px; display:block; margin-top:.75rem;"></canvas>
+      </div>
+    </section>
+
+    <section id="trend-chart" class="container" aria-label=" Trend chart section">
+      <h2 style="margin:.5rem 0 0.75rem 0;">7-Day AQI Trend</h2>
+      <p style="color:var(--muted); margin:.25rem 0 1rem 0;">This illustrative chart demonstrates six days of AQI values with a forecast-like extension. Values are for demonstration and accessibility testing.</p>
+      <canvas id="trendChart" aria-label="7 day AQI trend chart" class="chart" width="1000" height="260" style="width:100%; height:260px;"></canvas>
+    </section>
+
+    <section id="about" class="container" aria-label="About section">
+      <article class="card" style="padding:1rem;">
+        <h2 style="margin:0 0 .5rem 0;">About this project</h2>
+        <p>This is a plain static site suitable for GitHub Pages. It uses semantic HTML, embedded CSS, and vanilla JavaScript to render a responsive, accessible dashboard without external dependencies.</p>
+      </article>
+    </section>
+  </main>
+
+  <footer role="contentinfo" aria-label="Site footer">
+    <div class="container">
+      <p>© 2026 AirQuality MD. This is a static demonstration for educational use.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Helpers for smooth section navigation
+    function scrollToLive() { document.getElementById('live-snapshot').scrollIntoView({ behavior: 'smooth' }); }
+    function scrollToChart() { document.getElementById('trend-chart').scrollIntoView({ behavior: 'smooth' }); }
+
+    // Lightweight demo chart for live snapshot (sine-like data)
+    (function renderLiveChart(){
+      const canvas = document.getElementById('liveChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+
+      // Sample data: last 24 hours AQI-ish values
+      const data = [];
+      for (let i = 0; i < 24; i++) {
+        const v = 60 + 20 * Math.sin(i * Math.PI / 6) + (i%5)*3;
+        data.push(Math.max(20, Math.min(140, Math.round(v))));
+      }
+
+      // Draw axes
+      ctx.clearRect(0,0,W,H);
+      ctx.strokeStyle = 'rgba(255,255,255,.25)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(40, 10);
+      ctx.lineTo(40, H-20);
+      ctx.lineTo(W-6, H-20);
+      ctx.stroke();
+
+      // Y labels
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = '12px sans-serif';
+      for (let y = 0; y <= 6; y++) {
+        const py = 10 + y * ((H-30)/6);
+        const val = Math.round(140 - y * 20);
+        ctx.fillText(val, 6, py+4);
+      }
+
+      // Plot line
+      const plotW = W - 46;
+      const maxVal = 140;
+      ctx.strokeStyle = '#4cc9f0';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      data.forEach((v, idx) => {
+        const x = 40 + (idx * plotW) / (data.length - 1);
+        const y = (H - 20) - (v / maxVal) * (H - 30);
+        if (idx === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // Fill area under curve
+      ctx.fillStyle = 'rgba(76,201,240,.15)';
+      ctx.lineTo(40 + plotW, H - 20);
+      ctx.lineTo(40, H - 20);
+      ctx.closePath();
+      ctx.fill();
+    })();
+
+    // 7-day trend chart (simple bars)
+    (function renderTrendChart(){
+      const canvas = document.getElementById('trendChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+
+      // Sample 7-day values
+      const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+      const vals = [72, 88, 95, 110, 86, 60, 85];
+
+      // Background grid
+      ctx.clearRect(0,0,W,H);
+      ctx.fillStyle = 'rgba(255,255,255,.04)';
+      for (let i=0;i<7;i++){
+        ctx.fillRect(i*(W/7),0,2,H);
+      }
+
+      // Axes
+      ctx.strokeStyle = 'rgba(255,255,255,.25)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(40, 10);
+      ctx.lineTo(40, H-20);
+      ctx.lineTo(W-6, H-20);
+      ctx.stroke();
+
+      // Bars
+      const gap = 8;
+      const barW = (W - 60) / vals.length - gap;
+      for (let i=0; i<vals.length; i++){
+        const x = 40 + i * (barW + gap);
+        const h = ((vals[i] / 140) * (H - 40));
+        const y = H - 20 - h;
+        // bar
+        ctx.fillStyle = i%2===0 ? '#7b61ff' : '#4cc9f0';
+        ctx.fillRect(x, y, barW, h);
+        // label
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '12px sans-serif';
+        ctx.fillText(days[i], x + 4, H - 6);
+      }
+
+      // Y-axis max label
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = '12px sans-serif';
+      ctx.fillText('AQI', 6, 14);
+    })();
+  </script>
+</body>
+</html>
